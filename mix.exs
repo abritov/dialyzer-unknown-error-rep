@@ -22,32 +22,7 @@ defmodule DialyzerErrorRep.MixProject do
       dialyzer: [
         plt_file: {:no_warn, "dialyzer_cache/dialyzer.plt"},
         list_unused_filters: true,
-        plt_add_deps: :apps_direct,
-        plt_apps: [
-          :asn1,
-          :compiler,
-          :cowboy,
-          :cowboy_telemetry,
-          :cowlib,
-          :crypto,
-          :eex,
-          :elixir,
-          :hex,
-          :inets,
-          :kernel,
-          :logger,
-          :mime,
-          :mix,
-          :plug,
-          :plug_cowboy,
-          :plug_crypto,
-          :public_key,
-          :ranch,
-          :ssl,
-          :stdlib,
-          :telemetry
-        ]
-        ],
+        plt_add_apps: [:mix],
         ignore_warnings: "dialyzer_ignore.exs"
       ],
     ]
@@ -56,7 +31,7 @@ defmodule DialyzerErrorRep.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mix, :hex],
+      extra_applications: [:logger],
       mod: {DialyzerErrorRep.Application, []}
     ]
   end
@@ -66,6 +41,8 @@ defmodule DialyzerErrorRep.MixProject do
     [
       {:plug, "~> 1.11"},
       {:plug_cowboy, "~> 2.4"},
+
+      {:hex_core, "~> 0.11.0"},
 
       {:ex_check, ">= 0.0.0", only: [:dev, :test], runtime: false},
       {:excoveralls, ">= 0.0.0", only: :test},

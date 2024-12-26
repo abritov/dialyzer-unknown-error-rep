@@ -39,7 +39,7 @@ defmodule DialyzerErrorRep.RegistryBuilder do
         updated_at = updated_at && %{seconds: to_unix(updated_at), nanos: 0}
 
         package =
-          :mix_hex_registry.build_package(
+          :hex_registry.build_package(
             %{repository: repo_name, name: name, releases: releases},
             private_key
           )
@@ -60,7 +60,7 @@ defmodule DialyzerErrorRep.RegistryBuilder do
       end
 
     payload = %{repository: repo_name, packages: names}
-    names = :mix_hex_registry.build_names(payload, private_key)
+    names = :hex_registry.build_names(payload, private_key)
     write_file("#{public_dir}/names", names)
 
     versions =
@@ -69,7 +69,7 @@ defmodule DialyzerErrorRep.RegistryBuilder do
       end
 
     payload = %{repository: repo_name, packages: versions}
-    versions = :mix_hex_registry.build_versions(payload, private_key)
+    versions = :hex_registry.build_versions(payload, private_key)
     write_file("#{public_dir}/versions", versions)
   end
 
@@ -98,7 +98,7 @@ defmodule DialyzerErrorRep.RegistryBuilder do
 
   defp build_release(repo_name, tarball_path) do
     tarball = File.read!(tarball_path)
-    {:ok, result} = :mix_hex_tarball.unpack(tarball, :memory)
+    {:ok, result} = :hex_tarball.unpack(tarball, :memory)
 
     dependencies =
       for {package, map} <- Map.get(result.metadata, "requirements", []) do
@@ -138,7 +138,7 @@ defmodule DialyzerErrorRep.RegistryBuilder do
         :ok
 
       {:ok, _} ->
-        Hex.Shell.info("* public key at #{path} does not match private key, overwriting")
+        Mix.shell().info("* public key at #{path} does not match private key, overwriting")
         write_file(path, encoded_public_key)
 
       {:error, :enoent} ->
@@ -148,24 +148,24 @@ defmodule DialyzerErrorRep.RegistryBuilder do
 
   defp create_directory(path) do
     unless File.dir?(path) do
-      Hex.Shell.info(["* creating ", path])
+      Mix.shell().info(["* creating ", path])
       File.mkdir_p!(path)
     end
   end
 
   defp write_file(path, data) do
     if File.exists?(path) do
-      Hex.Shell.info(["* updating ", path])
+      Mix.shell().info(["* updating ", path])
     else
       File.mkdir_p!(Path.dirname(path))
-      Hex.Shell.info(["* creating ", path])
+      Mix.shell().info(["* creating ", path])
     end
 
     File.write!(path, data)
   end
 
   defp remove_file(path) do
-    Hex.Shell.info(["* removing ", path])
+    Mix.shell().info(["* removing ", path])
     File.rm!(path)
   end
 
