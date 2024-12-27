@@ -15,7 +15,7 @@ defmodule DialyzerErrorRep.Router do
 
   post "/publish" do
     {:ok, body, _new_conn} = Plug.Conn.read_body(conn)
-    {:ok, %{metadata: metadata}} = :mix_hex_tarball.unpack(body, :memory)
+    {:ok, %{metadata: metadata}} = :hex_tarball.unpack(body, :memory)
 
     public_dir = Application.fetch_env!(:dialyzer_error_rep, :public_dir)
     File.write("#{public_dir}/tarballs/#{metadata["name"]}-#{metadata["version"]}.tar", body)
